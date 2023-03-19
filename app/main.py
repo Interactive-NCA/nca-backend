@@ -8,12 +8,12 @@ from app.utils.run_model import run, get_behaviour0_char, get_behaviour1_char
 app = FastAPI()
 
 origins = [
-    "http://localhost",
     "http://localhost:3000",
     "https://localhost",
-    "https://localhost",
     "https://interactive-nca-ui-lukyrasocha.vercel.app/",
-    "https://interactive-nca-ui.vercel.app/"
+    "https://interactive-nca-ui.vercel.app/",
+    "https://interactive-nca-ui-lukyrasocha.vercel.app",
+    "https://interactive-nca-ui.vercel.app"
 ]
 
 app.add_middleware(
