@@ -4,15 +4,15 @@ from ribs.archives import ArchiveDataFrame
 import torch as th
 import json
 
-from ext.pcgrl.control_pcgrl.evo.models import NCA, set_weights
-from ext.pcgrl.control_pcgrl.evo.utils import get_one_hot_map
+from app.ext.pcgrl.control_pcgrl.evo.models import NCA, set_weights
+from app.ext.pcgrl.control_pcgrl.evo.utils import get_one_hot_map
 
 def run(symmetry, path_length, input_map):
     # Load init model parameters
-    with open("models/model_init.json") as f:
+    with open("app/models/model_init.json") as f:
         hyperameters = json.load(f)
 
-    df = ArchiveDataFrame(pd.read_csv("models/trained_archive.csv"))
+    df = ArchiveDataFrame(pd.read_csv("app/models/trained_archive.csv"))
 
     distances = np.sqrt((df["behavior_0"] - symmetry)**2 + (df["behavior_1"] - path_length)**2)
     mask = distances == distances.min()

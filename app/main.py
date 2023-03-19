@@ -2,10 +2,9 @@ from typing import Union
 import numpy as np
 
 from fastapi import FastAPI
-from utils.run_model import run
+from app.utils.run_model import run
 
 app = FastAPI()
-
 
 @app.get("/generate")
 def generate():
@@ -18,3 +17,7 @@ def generate():
 def read_root():
     return {"Hello": "World"}
 
+#@app.post("/generate2")
+#def generate(symmetry: float, path_length: int, input_map: Union[list, np.ndarray]):
+#    x = run(symmetry, path_length, input_map)
+#    return {"generated_map": x}
