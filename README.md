@@ -1,8 +1,8 @@
 # 🎮 Neural Cellular Automata Zelda Level Generator 🧩
 
-![Last commit](https://img.shields.io/github/last-commit/Interactive-NCA/nca-backend)i
+![Last commit](https://img.shields.io/github/last-commit/Interactive-NCA/nca-backend)
 
-This repository contains a backend for hosting a neural cellular automata (NCA) model for generating Zelda levels. The model is built using PyTorch and is hosted using FastAPI and Google Cloud. 
+This repository contains a backend for hosting a neural cellular automata (NCA) model for generating Zelda levels. The model is built using PyTorch and is hosted using FastAPI and Google Cloud ☁️. 
 
 The NCA model uses a grid-based approach, where each cell in the grid represents a tile in the level. The model generates levels by updating each cell in the grid based on its neighboring cells, and then repeating this process for a set number of iterations. The output of the model is a 2D grid of tiles that represents a generated Zelda level.
 
@@ -66,5 +66,5 @@ This repository is configured for deployment using Google Cloud️ ☁️. The a
 
 ## 🤝 Contributing
 
-Contributions are always welcome! If you have any ideas or suggestions for the project, please create an issue or submit a pull request.
+Contributions are always welcome! If you have any ideas or suggestions for the project, please create an issue or submit a pull request. Please follow these [conventions](https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716) for commit messages.
 
