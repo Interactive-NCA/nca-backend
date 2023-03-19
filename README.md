@@ -66,5 +66,5 @@ This repository is configured for deployment using Google Cloud️ ☁️. The a
 
 ## 🤝 Contributing
 
-Contributions are always welcome! If you have any ideas or suggestions for the project, please create an issue or submit a pull request.
+Contributions are always welcome! If you have any ideas or suggestions for the project, please create an issue or submit a pull request. Please follow these [conventions](https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716) for commit messages.
 
