@@ -1,0 +1,132 @@
+{
+ "exp_ids": [
+    # 0,
+    1,
+    # 2,
+    # 3,
+    # 4,
+    # 5,
+    # 6,
+    # 7,
+    # 8,
+    # 9,
+    # 10,
+  ],
+
+ "problems": [
+        # "microstructure"
+        "binary",
+        "zelda",
+        "sokoban",
+        # "smb_ctrl"
+        # "loderunner_ctrl",
+        # "face_ctrl",
+        # "minecraft_3D_rain",
+        # "minecraft_3D_maze",
+        # "minecraft_3D_holey_maze",
+        # "minecraft_3D_dungeon_holey",
+  ],
+
+ "representations": [
+        "cellular",
+  ],
+
+  "algos": [
+      "ME",
+  ],
+
+ "models": [
+        "DirectEncoding",
+  ],
+
+  # Standard deviation of a mutation in MAP-Elites. Initial step size in CMAME.
+  "step_sizes": [
+      0.05,  # this has no effect
+  ],
+
+  # Reevaluate elites on new random seeds after inserting into the archive?
+ "fix_elites": [
+          True,
+        ],
+
+  # Fix a set of random levels with which to seed the generator (otherwise generate new ones each generation).
+  "fix_seeds": [
+          True,
+          ],
+
+  "n_init_states_lst" : [
+    1,
+  ],
+
+  "n_steps_lst": [
+    1,
+  ],
+
+  "n_aux_chans": [
+    0,
+  ],
+
+  "global_bcs":  [
+        # ["NONE", "NONE"], 
+  #       ["emptiness", "symmetry"],
+  ],
+
+  "local_bcs": {
+      "minecraft_3D_rain": [
+        ["emptiness", "path-length"],
+      ],
+      "binary": [
+  #       ["regions", "path-length"],
+  #       ["emptiness", "path-length"],
+          ["symmetry", "path-length"],
+      ],
+      "zelda": [
+  #       ["nearest-enemy", "path-length"],
+  #       ["emptiness", "path-length"],
+          ["symmetry", "path-length"],
+      ],
+      "sokoban": [
+  #       ["crate", "sol-length"],
+          ["emptiness", "sol-length"],
+  #       ["symmetry", "sol-length"],
+      ],
+      "smb_ctrl": [
+        # ["jumps", "sol-length"],
+        ["emptiness", "sol-length"],
+        # ["symmetry", "sol-length"]
+        ],
+      "loderunner_ctrl": [
+          ["emptiness", "path-length"],
+  #       ["symmetry", "path-length"],
+  #       ["emptiness", "path-length"],
+          ["symmetry", "path-length"],
+  #       ["win", "path-length"],
+  #       ["gold", "emptiness"],
+      ],
+      "face_ctrl": [
+  #       ["face_1", "brightness"],
+  #       ['brightness', 'blur'],
+          ['brightness', 'entropy'],
+  #       ['rand_sol', 'rand_sol']
+      ],
+      "minecraft_3D_maze":[
+        ["emptiness", "path-length"],
+        # ["n_jump", "path-length"],
+        # ["emptiness", "n_jump"],
+      ],
+      "minecraft_3D_holey_maze":[
+        ["emptiness", "path-length"],
+        ["emptiness", "connected-path-length"],
+        ["path-length", "connected-path-length"],
+      ],
+      "minecraft_3D_dungeon_holey": [
+        ["emptiness", "nearest-enemy"],
+        ["emptiness", "path-length"],
+        ["nearest-enemy", "path-length"],
+      ],
+      "microstructure": [
+          # ["emptiness", "path-length"],
+          # ["path-length", "tortuosity"],
+      ]
+  },
+}

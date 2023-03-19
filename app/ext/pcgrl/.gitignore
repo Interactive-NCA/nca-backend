@@ -1,0 +1,83 @@
+# Ignore changes to SLURM sbatch scripts (mostly just changing email addresses etc.)
+# rl/train.sh
+# rl/eval.sh
+# evo/train.sh
+# evo/eval.sh
+*/train.sh
+*/eval.sh
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.swp
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.java-version
+
+# Tensorboard Logs
+runs/
+
+# Jupyter logs
+.ipynb_checkpoints/
+
+# Saved models
+*.zip
+
+# Custom logging
+evo_runs*/*
+control_pcgrl/evo_runs/*
+!evo_runs/.gitkeep
+rl_runs/*
+configs/evo/auto/settings_*.json
+configs/rl/auto/settings_*.json
+evopcgrl*.out
+evalevopcgrl*.out
+
+# Hydra
+outputs/*
+multirun/*
+
+# Slurm logs
+*.out
+
+# VSCode
+.vscode/
+
+# # Ignore PNG files (Wait... why?)
+# *.png
+
+# Ignore Mac OS finder cache
+*.DS_Store
+
+discriminator.pt
+
+# Ignore LaTex build files
+*.log
+*.aux
+
+# Ignore wandb logs
+wandb/

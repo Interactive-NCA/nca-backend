@@ -1,3 +1,10 @@
-# Main
+# Hosting 
 fastapi
 uvicorn
+
+# NCA model
+numpy
+pandas
+ribs
+torch
+opencv-python
