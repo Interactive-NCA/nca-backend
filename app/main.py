@@ -2,9 +2,27 @@ from typing import List
 import numpy as np
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.utils.run_model import run, get_behaviour0_char, get_behaviour1_char
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+    "https://localhost",
+    "https://interactive-nca-ui-lukyrasocha.vercel.app/",
+    "https://interactive-nca-ui.vercel.app/",
+    "https://interactive-nca-ui-lukyrasocha.vercel.app",
+    "https://interactive-nca-ui.vercel.app"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/test")
 def generate():

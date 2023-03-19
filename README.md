@@ -6,6 +6,10 @@ This repository contains a backend for hosting a neural cellular automata (NCA) 
 
 The NCA model uses a grid-based approach, where each cell in the grid represents a tile in the level. The model generates levels by updating each cell in the grid based on its neighboring cells, and then repeating this process for a set number of iterations. The output of the model is a 2D grid of tiles that represents a generated Zelda level.
 
+## 🛡️ Zelda level generation 
+
+The interactive web app that utilizes this backend can be seen [here](https://interactive-nca-ui.vercel.app/)
+
 ## ⚙️ Tech Stack
 - FastAPI
 - PyTorch 
