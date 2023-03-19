@@ -45,8 +45,15 @@ def run(symmetry, path_length, input_map):
 
     # Extract the level
     level = th.argmax(action[0], dim=0)
-    print(level)
 
     return level.numpy().tolist()
 
+def get_behaviour0_char():
+    df = ArchiveDataFrame(pd.read_csv("app/models/trained_archive.csv"))
+    bc1_min, bc1_max = df["behavior_0"].min(), df["behavior_0"].max()
+    return bc1_min, bc1_max
 
+def get_behaviour1_char():
+    df = ArchiveDataFrame(pd.read_csv("app/models/trained_archive.csv"))
+    bc2_min, bc2_max = df["behavior_1"].min(), df["behavior_1"].max()
+    return bc2_min, bc2_max
