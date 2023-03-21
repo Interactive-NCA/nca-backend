@@ -10,12 +10,12 @@ app = FastAPI(title='Interactive NCA API',
               description='API endpoints for the Interactive NCA model')
 
 origins = [
-    "http://localhost",
     "http://localhost:3000",
     "https://localhost",
-    "https://localhost",
     "https://interactive-nca-ui-lukyrasocha.vercel.app/",
-    "https://interactive-nca-ui.vercel.app/"
+    "https://interactive-nca-ui.vercel.app/",
+    "https://interactive-nca-ui-lukyrasocha.vercel.app",
+    "https://interactive-nca-ui.vercel.app"
 ]
 
 app.add_middleware(
