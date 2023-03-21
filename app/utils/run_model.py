@@ -8,6 +8,18 @@ from app.ext.pcgrl.control_pcgrl.evo.models import NCA, set_weights
 from app.ext.pcgrl.control_pcgrl.evo.utils import get_one_hot_map
 
 def run(symmetry, path_length, input_map):
+    """
+    Find the closest model to the given symmetry and path length and run it on the input map
+
+    Args:
+        symmetry: float
+        path_length: float
+        input_map: List[List[int]]
+
+    Returns:
+        generated_map: List[List[int]]
+    """
+
     # Load init model parameters
     with open("app/models/model_init.json") as f:
         hyperameters = json.load(f)
@@ -47,13 +59,3 @@ def run(symmetry, path_length, input_map):
     level = th.argmax(action[0], dim=0)
 
     return level.numpy().tolist()
-
-def get_behaviour0_char():
-    df = ArchiveDataFrame(pd.read_csv("app/models/trained_archive.csv"))
-    bc1_min, bc1_max = df["behavior_0"].min(), df["behavior_0"].max()
-    return bc1_min, bc1_max
-
-def get_behaviour1_char():
-    df = ArchiveDataFrame(pd.read_csv("app/models/trained_archive.csv"))
-    bc2_min, bc2_max = df["behavior_1"].min(), df["behavior_1"].max()
-    return bc2_min, bc2_max
