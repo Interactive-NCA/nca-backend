@@ -44,6 +44,7 @@ def run(symmetry, path_length, input_map):
     # Get the level
     obs = get_one_hot_map(input_map, N_TILE_TYPES)
     in_tensor = th.unsqueeze(th.Tensor(obs), 0)
+    steps = []
 
     for _ in range(N_ITER):
         if SET_FT:
@@ -54,8 +55,6 @@ def run(symmetry, path_length, input_map):
         level = th.argmax(action[0], dim=0)
         obs = get_one_hot_map(level.numpy(), N_TILE_TYPES)
         in_tensor = th.unsqueeze(th.Tensor(obs), 0)
+        steps.append(level.numpy().tolist())
 
-    # Extract the level
-    level = th.argmax(action[0], dim=0)
-
-    return level.numpy().tolist()
+    return steps 
