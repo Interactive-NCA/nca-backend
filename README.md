@@ -39,20 +39,22 @@ This will start the FastAPI server, which you can access by navigating to `http:
 
 ## 📝 Usage
 
-The backend provides a simple API for generating Zelda levels using the NCA model. To generate a level, you can send a POST request to the `/generate` endpoint with the following JSON payload:
+The backend provides a simple API for generating Zelda levels using the NCA model. To generate a level, you can send a POST request to the `/generate?path_length=${PATH_LENGTH}&symmetry=${SYMMETRY}` endpoint with the following JSON payload:
 
 ```json
-{
-}
+curl -X 'POST' \
+  'https://nca-backend-rxv2teft2q-ew.a.run.app/generate?path_length=10&symmetry=10' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0],[0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0],[0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0],[0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0],[0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],[0, 0, 0, 0, 0, 1, 1, 6, 1, 1, 1, 1, 0, 0, 0, 0],[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],[0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 5, 0, 0, 0, 0, 0],[0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],[0, 0, 0, 1, 6, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],[0, 0, 3, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 2, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]'
+
 ```
 
 The backend will respond with a JSON payload containing the generated level data:
 
 ```json
 {
-  "width": 32,
-  "height": 32,
-  "tiles": [
+  "generated_map": [
     [0, 0, 0, ...],
     [0, 1, 1, ...],
     [0, 1, 1, ...],
