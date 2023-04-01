@@ -1,0 +1,6 @@
+[submodule "app/ext/control-pcgnca"]
+	path = app/ext/control-pcgnca
+	url = git@github.com:Interactive-NCA/control-pcgnca.git
+[submodule "app/ext/control_pcgnca"]
+	path = app/ext/control_pcgnca
+	url = git@github.com:Interactive-NCA/control-pcgnca.git
