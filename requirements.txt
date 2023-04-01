@@ -8,3 +8,14 @@ pandas
 ribs
 torch
 opencv-python
+matplotlib
+
+# Submodule
+ray[default]
+ribs
+rich
+tqdm
+torch
+matplotlib
+tabulate
+psutil
