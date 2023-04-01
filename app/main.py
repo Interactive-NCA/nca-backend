@@ -103,6 +103,6 @@ def get_both_and_obj():
 # Test endpoints
 @app.get("/test")
 def generate():
-    input_map = np.random.randint(0, 7, size=(16, 16)) 
+    input_map = np.random.randint(0, 4, size=(16, 16)) 
     x = run(0.2, 5, input_map)
     return {"generated_map": x}
