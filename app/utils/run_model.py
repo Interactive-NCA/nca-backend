@@ -3,8 +3,8 @@ import numpy as np
 from ribs.archives import ArchiveDataFrame
 import torch as th
 
-from app.ext.control_pcgnca.pcgnca.evo._models import NCA, set_weights
-from app.ext.control_pcgnca.pcgnca.evo._simulate import _preprocess_input
+from app.ext.pcgnca.pcgnca.evo._models import NCA, set_weights
+from app.ext.pcgnca.pcgnca.evo._simulate import _preprocess_input
 
 def run(symmetry, path_length, input_map):
     """
