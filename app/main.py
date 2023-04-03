@@ -33,7 +33,7 @@ def read_root():
 
 # Generate a level from some given seed
 @app.post("/generate")
-async def generate(path_length: float, symmetry: float, input_map: List[List[int]]):
+async def generate(path_length: float, symmetry: float, input_map: List[List[List[int]]]):
     """
     Generate a level from a given seed
     Args:
@@ -44,8 +44,10 @@ async def generate(path_length: float, symmetry: float, input_map: List[List[int
     Returns:
         generated_map: List[List[int]]
     """
-    input_array = np.array(input_map)
-    x = run(symmetry, path_length, input_array)
+    input_array = np.array(input_map[0]) # 2D int encoded level
+    binary_array = np.array(input_map[1]) # binary array noting which tiles are fixed
+    combined = np.array([input_array, binary_array])
+    x = run(symmetry, path_length, combined)
     return {"generated_map": x}
 
 
