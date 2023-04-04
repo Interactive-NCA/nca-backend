@@ -1,7 +1,4 @@
-from ribs.archives import ArchiveDataFrame
-import pandas as pd
-
-name = "app/models/playability_eval_archive.csv"
+from app.utils.get_path import get_archive
 
 def get_extremes_behaviour0_char():
     """
@@ -10,8 +7,8 @@ def get_extremes_behaviour0_char():
     Returns:
         extreme0: List[float]
     """
-    df = ArchiveDataFrame(pd.read_csv(name))
-    bc1_min, bc1_max = df["behavior_0"].min(), df["behavior_0"].max()
+    df = get_archive()
+    bc1_min, bc1_max = df["measure_0"].min(), df["measure_0"].max()
     return bc1_min, bc1_max
 
 def get_extremes_behaviour1_char():
@@ -21,8 +18,8 @@ def get_extremes_behaviour1_char():
     Returns:
         extreme1: List[float]
     """
-    df = ArchiveDataFrame(pd.read_csv(name))
-    bc2_min, bc2_max = df["behavior_1"].min(), df["behavior_1"].max()
+    df = get_archive()
+    bc2_min, bc2_max = df["measure_1"].min(), df["measure_1"].max()
     return bc2_min, bc2_max
 
 def get_behaviour0_char():
@@ -32,8 +29,8 @@ def get_behaviour0_char():
     Returns:
         behaviour0: List[float]
     """
-    df = ArchiveDataFrame(pd.read_csv(name))
-    return df["behavior_0"] 
+    df = get_archive()
+    return df["measure_0"] 
 
 def get_behaviour1_char():
     """
@@ -42,8 +39,8 @@ def get_behaviour1_char():
     Returns:
         behaviour1: List[float]
     """
-    df = ArchiveDataFrame(pd.read_csv(name))
-    return df["behavior_1"] 
+    df = get_archive()
+    return df["measure_1"] 
 
 def get_obj_char():
     """
@@ -52,5 +49,5 @@ def get_obj_char():
     Returns:
         behaviours: List[List[float], List[float], List[float]]
     """
-    df = ArchiveDataFrame(pd.read_csv(name))
-    return df["behavior_0"].to_list(), df["behavior_1"].to_list(), df["objective"].to_list()
+    df = get_archive()
+    return df["measure_0"].to_list(), df["measure_1"].to_list(), df["objective"].to_list()

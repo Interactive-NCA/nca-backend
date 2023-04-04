@@ -1,10 +1,7 @@
-import pandas as pd
 import numpy as np
-from ribs.archives import ArchiveDataFrame
-import json
-
 from app.ext.pcgnca.pcgnca.evo._models import NCA, set_weights
 from app.ext.pcgnca.pcgnca.evo._simulate import _simulate
+from app.utils.get_path import get_archive, get_model_settings
 
 def run(symmetry, path_length, input_map):
     """
@@ -19,18 +16,14 @@ def run(symmetry, path_length, input_map):
         generated_map: List[List[int]]
     """
 
-    # Load the archive
-    df = ArchiveDataFrame(pd.read_csv("app/models/playability_eval_archive.csv"))
+    settings = get_model_settings()
+    df = get_archive()
 
     # Find the closest model
-    distances = np.sqrt((df["behavior_0"] - symmetry)**2 + (df["behavior_1"] - path_length)**2)
+    distances = np.sqrt((df["measure_0"] - symmetry)**2 + (df["measure_1"] - path_length)**2)
     mask = distances == distances.min()
     start = list(df.columns).index("solution_0")
     weights = df[mask].iloc[:, start:].to_numpy().flatten() 
-
-    # - Get settings of the experiment
-    with open("app/models/settings.json") as f:
-        settings = json.load(f)
 
     # - Get the model object
     model = NCA(settings["n_tiles"], settings["n_aux_chans"], settings["binary_channel"])
@@ -60,7 +53,7 @@ def run(symmetry, path_length, input_map):
     }
 
     # - Run the model
-    lvl_per_step = _simulate(
+    lvl_per_step, aux_channels, last_stats = _simulate(
         model,
         init_state,
         fixed_tiles,
@@ -71,5 +64,9 @@ def run(symmetry, path_length, input_map):
         obj_weights,
         "generated_lvls"
     )
+
+    print("Last stats: ", last_stats)
     lvl_per_step = lvl_per_step.reshape((settings["n_steps"], dim, dim))
-    return lvl_per_step.tolist()
+    #aux_channels = aux_channels.reshape((settings["n_steps"], settings["n_aux_chans"], dim, dim))
+
+    return [lvl_per_step.tolist(), aux_channels.tolist()]
