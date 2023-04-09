@@ -79,8 +79,8 @@ def _simulate(
 
             # --- Save the levels
             levels.append(level)
-            #aux_channels.append(aux.numpy()) # get all aux channels
-            aux_channels.append(aux.numpy()[0][0]) # for now get only the first aux channel
+            aux_channels.append(aux.numpy()) # get all aux channels
+            #aux_channels.append(np.mean(aux.numpy()[0], axis=0)) # for now get only the first aux channel
 
             # --- Setup the input for the model again
             if fixed_tiles is not None and binary_mask is not None:

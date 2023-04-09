@@ -65,8 +65,13 @@ def run(symmetry, path_length, input_map):
         "generated_lvls"
     )
 
+    print("="*15)
     print("Last stats: ", last_stats)
+    print("="*15)
     lvl_per_step = lvl_per_step.reshape((settings["n_steps"], dim, dim))
-    #aux_channels = aux_channels.reshape((settings["n_steps"], settings["n_aux_chans"], dim, dim))
+
+    # Get the shape (n_aux_channels, n_steps, dim, dim)
+    aux_channels = np.transpose(aux_channels, (2, 0, 3, 4, 1))
+    aux_channels = np.squeeze(aux_channels, axis=4)
 
     return [lvl_per_step.tolist(), aux_channels.tolist()]
