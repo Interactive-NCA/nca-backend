@@ -32,7 +32,7 @@ pip install -r requirements.txt
 Once you have installed the dependencies, you can run the backend using the following command:
 
 ```bash
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
 
 This will start the FastAPI server, which you can access by navigating to `http://localhost:8000` in your web browser.
