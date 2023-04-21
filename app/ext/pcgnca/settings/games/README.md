@@ -1,1 +1,0 @@
-I should provide for each game a template to fill.
