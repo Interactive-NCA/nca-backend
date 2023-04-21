@@ -61,8 +61,11 @@ def run(symmetry, path_length, input_map):
         settings["n_tiles"],
         settings["n_steps"],
         settings["overwrite"],
+        settings["padding_type"],
         obj_weights,
-        "generated_lvls"
+        "generated_lvls",
+        settings["bcs"],
+        settings["include_diversity"]
     )
 
     print("="*15)
