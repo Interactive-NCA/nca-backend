@@ -1,6 +1,6 @@
 {
-  "EXP_ID": "3",
+  "EXP_ID": "1",
   "METRIC": "playability",
-  "EVAL":  true,
-  "FIXED": true
+  "EVAL":  false,
+  "FIXED": false
 }
