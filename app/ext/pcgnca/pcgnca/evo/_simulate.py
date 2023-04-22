@@ -53,6 +53,11 @@ def _simulate(
         if fixed_tiles is not None and binary_mask is not None:
             in_tensor = _preprocess_input(init_states[state_i], n_tile_types, fixed_tiles[state_i], binary_mask[state_i], overwrite)
 
+        # --- Only fixed tiles
+        # ---- if ovewrite is true, ovewrite model's output in the position of fixed tiles if neccessary
+        elif fixed_tiles is not None:
+            in_tensor = _preprocess_input(init_states[state_i], n_tile_types, fixed_tiles[state_i], None, overwrite)
+
         # --- Only bin mask =
         # ---- Add bin channel
         # ---- Rest same as with no fixed tiles
@@ -70,7 +75,6 @@ def _simulate(
         levels = [] # keeps track of generated levels after each step
         aux_channels = []
         for _ in range(n_steps):
-
             # --- Run the single forward pass
             action, aux = model(in_tensor)
 
@@ -85,10 +89,12 @@ def _simulate(
             # --- Setup the input for the model again
             if fixed_tiles is not None and binary_mask is not None:
                 in_tensor = _preprocess_input(level, n_tile_types, fixed_tiles[state_i], binary_mask[state_i], overwrite)
+            elif fixed_tiles is not None:
+                in_tensor = _preprocess_input(level, n_tile_types, fixed_tiles[state_i], None, overwrite)
             elif binary_mask is not None:
-                in_tensor = _preprocess_input(init_states[state_i], n_tile_types, None, binary_mask[state_i], overwrite)
+                in_tensor = _preprocess_input(level, n_tile_types, None, binary_mask[state_i], overwrite)
             else:
-                in_tensor = _preprocess_input(level, n_tile_types)
+                in_tensor = _preprocess_input(level, n_tile_types, fixed=fixed_tiles[state_i], overwrite=overwrite)
 
         # -- Reset the auxiliary channels for the next input seed to zero
         model.reset()
@@ -109,10 +115,11 @@ def _simulate(
         return evaluator.evaluate_level_batch(batch_stats, to_return)
 
 def _preprocess_input(seed, n_tile_types, fixed=None, bin_mask=None, overwrite=False):
-    
+
     # --- Overwrite = Make sure that model always receive the fixed tiles
     if overwrite and fixed is not None:
-        np.putmask(seed, bin_mask, fixed)
+        np.putmask(seed, (fixed > 0).astype(int), fixed)
+        #np.putmask(seed, bin_mask, fixed)
 
     # --- One hot encode the seed
     seed_encoded = (np.arange(n_tile_types) == seed[..., None]).astype(int)
