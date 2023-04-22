@@ -1,6 +1,10 @@
 # Hosting 
 fastapi
 uvicorn
+google-cloud-storage
+fsspec
+gcsfs
+
 
 # NCA model
 numpy
