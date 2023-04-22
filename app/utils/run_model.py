@@ -43,7 +43,6 @@ def run(symmetry, path_length, input_map):
 
     # - Infer the fixed tiles
     fixed_tiles = np.zeros((1, dim, dim), dtype=int)
-
     fixed_tiles[bin_channel == 1] = init_state[bin_channel == 1]
 
     # - Infer objective function weights from the settings
@@ -52,8 +51,13 @@ def run(symmetry, path_length, input_map):
             "reliability": settings["reliability_weight"]
     }
 
+    # - Run assertions
+    # -- Model was not using bin. channel
+    if not settings["binary_channel"]:
+        bin_channel = None
+
     # - Run the model
-    lvl_per_step, aux_channels, last_stats = _simulate(
+    lvl_per_step, aux_channels, last_stats, batch_stats = _simulate(
         model,
         init_state,
         fixed_tiles,
@@ -68,9 +72,12 @@ def run(symmetry, path_length, input_map):
         settings["include_diversity"]
     )
 
-    print("="*15)
-    print("Last stats: ", last_stats)
-    print("="*15)
+    print("="*100)
+    batch_stats = [round(n, 2) for n in batch_stats]
+    print(f"Training score of the selected model: {df[mask]['objective'].iloc[0]}")
+    print(f"Path length: {last_stats['path_length']} (exp: {path_length})", f"Symmetry: {last_stats['symmetry']} (exp: {symmetry})")
+    print(f"Objective: {batch_stats[0]}", f"Playbility penalty: {batch_stats[1]}")
+    print("="*100)
     lvl_per_step = lvl_per_step.reshape((settings["n_steps"], dim, dim))
 
     # Get the shape (n_aux_channels, n_steps, dim, dim)

@@ -11,9 +11,9 @@ def get_archive_path():
 
     if model_path["EVAL"]:
         if model_path["FIXED"]:
-            PATH = f'app/models/exp{model_path["EXP_ID"]}/fixed_tiles_evaluation/{model_path["METRIC"]}_eval_archive.csv'
+            PATH = f'app/models/exp{model_path["EXP_ID"]}/fixed_tiles_evaluation_summary/{model_path["METRIC"]}_eval_archive.csv'
         else:
-            PATH = f'app/models/exp{model_path["EXP_ID"]}/evaluation/{model_path["METRIC"]}_eval_archive.csv'
+            PATH = f'app/models/exp{model_path["EXP_ID"]}/evaluation_summary/{model_path["METRIC"]}_eval_archive.csv'
     else:
         PATH = f'app/models/exp{model_path["EXP_ID"]}/trained_archive.csv'
 
@@ -25,10 +25,11 @@ def get_archive():
     """
     PATH = get_archive_path()
 
-    raw_df = pd.read_csv(PATH)
-    #sorted_df = raw_df.sort_values(by=['objective'], ascending=False)
+    df = pd.read_csv(PATH)
+    # df = df.sample(frac=1)
+    df = df.sort_values(by=['objective'], ascending=False).iloc[100:]
 
-    df = ArchiveDataFrame(raw_df)
+    df = ArchiveDataFrame(df)
 
     return df 
 
