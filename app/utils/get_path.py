@@ -13,9 +13,9 @@ def get_archive_path():
 
     if model_path["EVAL"]:
         if model_path["FIXED"]:
-            PATH = f'models/exp{model_path["EXP_ID"]}/fixed_tiles_evaluation/{model_path["METRIC"]}_eval_archive.csv'
+            PATH = f'app/models/exp{model_path["EXP_ID"]}/fixed_tiles_evaluation_summary/{model_path["METRIC"]}_eval_archive.csv'
         else:
-            PATH = f'models/exp{model_path["EXP_ID"]}/evaluation/{model_path["METRIC"]}_eval_archive.csv'
+            PATH = f'app/models/exp{model_path["EXP_ID"]}/evaluation_summary/{model_path["METRIC"]}_eval_archive.csv'
     else:
         PATH = f'models/exp{model_path["EXP_ID"]}/trained_archive.csv'
 
@@ -25,17 +25,14 @@ def get_archive(exp_id=None):
     """
     Get the archive
     """
-    BUCKET_NAME = "pcgnca-experiments"
-    if exp_id is None:
-        PATH = get_archive_path() # Get path defined in models_path.json
-    else:
-        PATH = f'models/exp{exp_id}/trained_archive.csv' # Get path desired from the user
 
-    raw_df = pd.read_csv(f'gs://{BUCKET_NAME}/{PATH}')
+    # - Load models
+    PATH = get_archive_path()
+    df = pd.read_csv(PATH)
 
-    sorted_df = raw_df.sort_values(by=['objective'], ascending=False)
-
-    df = ArchiveDataFrame(sorted_df)
+    # - Select the best models with non-zero solution path length
+    df = df.sort_values(by=['objective'], ascending=False)[df["measure_1"] != 0]
+    df = ArchiveDataFrame(df)
 
     return df 
 
