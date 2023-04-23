@@ -23,12 +23,13 @@ def get_archive():
     """
     Get the archive
     """
+
+    # - Load models
     PATH = get_archive_path()
-
     df = pd.read_csv(PATH)
-    # df = df.sample(frac=1)
-    df = df.sort_values(by=['objective'], ascending=False).iloc[100:]
 
+    # - Select the best models with non-zero solution path length
+    df = df.sort_values(by=['objective'], ascending=False)[df["measure_1"] != 0]
     df = ArchiveDataFrame(df)
 
     return df 

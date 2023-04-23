@@ -1,6 +1,7 @@
 import numpy as np
 from app.ext.pcgnca.pcgnca.evo._models import NCA, set_weights
 from app.ext.pcgnca.pcgnca.evo._simulate import _simulate
+from app.ext.pcgnca.pcgnca.evo._evaluate import ZeldaEvaluation
 from app.utils.get_path import get_archive, get_model_settings
 
 def run(symmetry, path_length, input_map):
@@ -16,10 +17,18 @@ def run(symmetry, path_length, input_map):
         generated_map: List[List[int]]
     """
 
+    # - Initialise settings of the experiment and get the archive with models
     settings = get_model_settings()
     df = get_archive()
 
-    # Find the closest model
+    # - Initialise evaluator for the experiment
+    obj_weights = {
+            "playability" : settings["playability_weight"],
+            "reliability": settings["reliability_weight"]
+        }
+    evaluator = ZeldaEvaluation(settings["grid_dim"], obj_weights, settings["n_tiles"], settings["bcs"], settings["include_diversity"])
+
+    # - Find the closest model
     distances = np.sqrt((df["measure_0"] - symmetry)**2 + (df["measure_1"] - path_length)**2)
     mask = distances == distances.min()
     start = list(df.columns).index("solution_0")
@@ -72,15 +81,22 @@ def run(symmetry, path_length, input_map):
         settings["include_diversity"]
     )
 
+    # - For dev purposes only
+    # TODO: maybe add flag?
     print("="*100)
+    # -- Input stats report
+    input_stats = evaluator.get_zelda_level_stats(init_state[0])
+    print(f"Input symmetry was: {input_stats['symmetry']}")
+
+    # -- Output stats report
     batch_stats = [round(n, 2) for n in batch_stats]
     print(f"Training score of the selected model: {df[mask]['objective'].iloc[0]}")
     print(f"Path length: {last_stats['path_length']} (exp: {path_length})", f"Symmetry: {last_stats['symmetry']} (exp: {symmetry})")
     print(f"Objective: {batch_stats[0]}", f"Playbility penalty: {batch_stats[1]}")
     print("="*100)
+    
+    # - Get the expected shape, i.e., (n_aux_channels, n_steps, dim, dim)
     lvl_per_step = lvl_per_step.reshape((settings["n_steps"], dim, dim))
-
-    # Get the shape (n_aux_channels, n_steps, dim, dim)
     aux_channels = np.transpose(aux_channels, (2, 0, 3, 4, 1))
     aux_channels = np.squeeze(aux_channels, axis=4)
 
