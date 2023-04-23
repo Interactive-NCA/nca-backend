@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import os
+import pickle
 from ribs.archives import ArchiveDataFrame
 from google.cloud import storage
 
@@ -32,7 +33,7 @@ def get_archive(exp_id=None, local=False):
         df = pd.read_csv(PATH)
 
         # - Select the best models with non-zero solution path length
-        df = df.sort_values(by=['objective'], ascending=False)[df["measure_1"] != 0]
+        df = df.sort_values(by=['objective'], ascending=False)
         df = ArchiveDataFrame(df)
         
         return df
@@ -43,11 +44,34 @@ def get_archive(exp_id=None, local=False):
 
         df = pd.read_csv(f'gs://{BUCKET_NAME}/{PATH}')
 
-        df = df.sort_values(by=['objective'], ascending=False)[df["measure_1"] != 0]
+        df = df.sort_values(by=['objective'], ascending=False)
 
         df = ArchiveDataFrame(df)
 
         return df 
+
+def load_training_seeds(exp_id=None, local=False):
+    """
+    Load the training seeds
+    """
+    if local:
+        pass
+    else:
+        BUCKET_NAME = "pcgnca-experiments"
+
+        blob_path = f'models/exp{exp_id}/training_seeds.pkl'
+        client = storage.Client()
+        bucket = client.get_bucket(BUCKET_NAME)
+        blob = bucket.blob(blob_path)
+
+        # Download the blob as a string
+        blob_string = blob.download_as_string()
+
+        # Load the JSON string as a dictionary
+        train_seeds = pickle.loads(blob_string)
+    
+    return train_seeds
+
 
 def get_model_settings(exp_id=None, local=False):
     """
