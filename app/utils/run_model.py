@@ -20,7 +20,7 @@ def run(exp_id, symmetry, path_length, input_map, local):
     """
 
     settings = get_model_settings(exp_id, local)
-    df = get_archive(exp_id)
+    df = get_archive(exp_id, local)
 
     # For older archives that don't have metadata
     if "metadata" not in df.columns:

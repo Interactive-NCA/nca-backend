@@ -42,12 +42,12 @@ def get_behaviour1_char():
     df = get_archive()
     return df["measure_1"] 
 
-def get_obj_char(exp_id: int):
+def get_obj_char(exp_id: int, local=False):
     """
     Get the objective characteristics
 
     Returns:
         behaviours: List[List[float], List[float], List[float]]
     """
-    df = get_archive(exp_id)
+    df = get_archive(exp_id, local)
     return df["measure_0"].to_list(), df["measure_1"].to_list(), df["objective"].to_list()

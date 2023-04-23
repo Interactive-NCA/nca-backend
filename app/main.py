@@ -105,8 +105,7 @@ def get_both_and_obj(exp_id: int):
     Returns:
         behaviours: List[List[float], List[float], List[float]]
     """
-    print(exp_id)
-    return {"behaviours": get_obj_char(exp_id)}
+    return {"behaviours": get_obj_char(exp_id, LOCAL)}
 
 @app.get("/experimentnames")
 def experiment_names():

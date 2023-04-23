@@ -21,20 +21,33 @@ def get_archive_path():
 
     return PATH
 
-def get_archive(exp_id=None):
+def get_archive(exp_id=None, local=False):
     """
     Get the archive
     """
 
-    # - Load models
-    PATH = get_archive_path()
-    df = pd.read_csv(PATH)
+    if local:
+        # - Load models
+        PATH = get_archive_path()
+        df = pd.read_csv(PATH)
 
-    # - Select the best models with non-zero solution path length
-    df = df.sort_values(by=['objective'], ascending=False)[df["measure_1"] != 0]
-    df = ArchiveDataFrame(df)
+        # - Select the best models with non-zero solution path length
+        df = df.sort_values(by=['objective'], ascending=False)[df["measure_1"] != 0]
+        df = ArchiveDataFrame(df)
+        
+        return df
 
-    return df 
+    else:
+        BUCKET_NAME = "pcgnca-experiments"
+        PATH = f'models/exp{exp_id}/trained_archive.csv' # Get path desired from the user
+
+        df = pd.read_csv(f'gs://{BUCKET_NAME}/{PATH}')
+
+        df = df.sort_values(by=['objective'], ascending=False)[df["measure_1"] != 0]
+
+        df = ArchiveDataFrame(df)
+
+        return df 
 
 def get_model_settings(exp_id=None, local=False):
     """
