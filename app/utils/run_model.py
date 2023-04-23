@@ -4,7 +4,8 @@ from app.ext.pcgnca.pcgnca.evo._simulate import _simulate
 from app.ext.pcgnca.pcgnca.evo._evaluate import ZeldaEvaluation
 from app.utils.get_path import get_archive, get_model_settings
 
-def run(symmetry, path_length, input_map):
+
+def run(exp_id, symmetry, path_length, input_map):
     """
     Find the closest model to the given symmetry and path length and run it on the input map
 
@@ -14,12 +15,15 @@ def run(symmetry, path_length, input_map):
         input_map: List[List[List[int]]]
 
     Returns:
-        generated_map: List[List[int]]
+        generated_map: List[List[List[int]]]
     """
 
-    # - Initialise settings of the experiment and get the archive with models
-    settings = get_model_settings()
-    df = get_archive()
+    settings = get_model_settings(exp_id)
+    df = get_archive(exp_id)
+
+    # For older archives that don't have metadata
+    if "metadata" not in df.columns:
+        df["metadata"] = 0
 
     # - Initialise evaluator for the experiment
     obj_weights = {
@@ -32,7 +36,8 @@ def run(symmetry, path_length, input_map):
     distances = np.sqrt((df["measure_0"] - symmetry)**2 + (df["measure_1"] - path_length)**2)
     mask = distances == distances.min()
     start = list(df.columns).index("solution_0")
-    weights = df[mask].iloc[:, start:].to_numpy().flatten() 
+    weights = df[mask].iloc[:, start:-1].to_numpy().flatten() 
+    generation = df[mask]["metadata"].to_numpy()[0]
 
     # - Get the model object
     model = NCA(settings["n_tiles"], settings["n_aux_chans"], settings["binary_channel"])
@@ -100,4 +105,4 @@ def run(symmetry, path_length, input_map):
     aux_channels = np.transpose(aux_channels, (2, 0, 3, 4, 1))
     aux_channels = np.squeeze(aux_channels, axis=4)
 
-    return [lvl_per_step.tolist(), aux_channels.tolist()]
+    return [lvl_per_step.tolist(), aux_channels.tolist()] 
