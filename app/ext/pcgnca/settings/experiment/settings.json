@@ -1,0 +1,20 @@
+{
+    "experiment_id": 11,
+    "description" : "Same as baseline except we are not using diversity.",
+    "game": "zelda",
+    "model_name": "NCA",
+    "step_size": 0.05,
+    "n_init_states": 10,
+    "n_steps": 50,
+    "n_aux_chans": 3,
+    "binary_channel": false,
+    "fixed_tiles": false,
+    "fixed_tiles_difficulty": "manual",
+    "fixed_tiles_archive_size": 100,
+    "evolve_strategy": "default",
+    "padding_type": 0,
+    "overwrite": true,
+    "playability_weight": 1,
+    "reliability_weight": 1,
+    "include_diversity": false
+}
