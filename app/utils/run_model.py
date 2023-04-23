@@ -5,7 +5,7 @@ from app.ext.pcgnca.pcgnca.evo._evaluate import ZeldaEvaluation
 from app.utils.get_path import get_archive, get_model_settings
 
 
-def run(exp_id, symmetry, path_length, input_map):
+def run(exp_id, symmetry, path_length, input_map, local):
     """
     Find the closest model to the given symmetry and path length and run it on the input map
 
@@ -13,12 +13,13 @@ def run(exp_id, symmetry, path_length, input_map):
         symmetry: float
         path_length: float
         input_map: List[List[List[int]]]
+        local: bool
 
     Returns:
         generated_map: List[List[List[int]]]
     """
 
-    settings = get_model_settings(exp_id)
+    settings = get_model_settings(exp_id, local)
     df = get_archive(exp_id)
 
     # For older archives that don't have metadata

@@ -17,7 +17,7 @@ def get_archive_path():
         else:
             PATH = f'app/models/exp{model_path["EXP_ID"]}/evaluation_summary/{model_path["METRIC"]}_eval_archive.csv'
     else:
-        PATH = f'models/exp{model_path["EXP_ID"]}/trained_archive.csv'
+        PATH = f'app/models/exp{model_path["EXP_ID"]}/trained_archive.csv'
 
     return PATH
 
@@ -36,11 +36,15 @@ def get_archive(exp_id=None):
 
     return df 
 
-def get_model_settings(exp_id=None):
+def get_model_settings(exp_id=None, local=False):
     """
     Get the settings of the model
     """
-    if exp_id is None:
+    if exp_id and local:
+        with open(f'app/models/exp{exp_id}/settings.json') as f:
+            settings = json.load(f)
+            return settings
+    elif exp_id is None:
         with open(f"app/models/model_path.json") as f:
             model_path = json.load(f)
 
@@ -64,16 +68,34 @@ def get_model_settings(exp_id=None):
     
     return settings
 
-def list_models_folders():
+def list_models_folders(local=False):
     """List all folders in the 'models' folder of a Google Cloud Storage bucket."""
-    bucket_name = "pcgnca-experiments"
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    folders = set()
-    
-    for blob in bucket.list_blobs(prefix="models/"):
-        if "/" in blob.name[len("models/"):]:
-            folder = blob.name[len("models/"):].split("/")[0]
-            folders.add(int(folder[3:]))
-    
-    return list(folders)
+
+    # - Local dev
+    if local:
+        # -- Define path to the experiments
+        path = os.path.join(os.getcwd(), "app", "models")
+
+        # -- Get all the experiment ids
+        # --- Form: exp[ID]
+        experiments = [x[0].split(os.sep)[-1] for x in os.walk(path)][1:]
+
+        # --- Parse the id
+        experiments = [int(x[3:]) for x in experiments]
+        print(experiments)
+
+        return experiments
+
+    # - Production
+    else:
+        bucket_name = "pcgnca-experiments"
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(bucket_name)
+        folders = set()
+        
+        for blob in bucket.list_blobs(prefix="models/"):
+            if "/" in blob.name[len("models/"):]:
+                folder = blob.name[len("models/"):].split("/")[0]
+                folders.add(int(folder[3:]))
+        
+        return list(folders)

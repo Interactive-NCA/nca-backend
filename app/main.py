@@ -7,6 +7,9 @@ from app.utils.run_model import run
 from app.utils.behaviour import get_extremes_behaviour0_char, get_extremes_behaviour1_char, get_behaviour0_char, get_behaviour1_char, get_obj_char
 from app.utils.get_path import list_models_folders
 
+
+LOCAL = True
+
 app = FastAPI(title='Interactive NCA API',
               description='API endpoints for the Interactive NCA model')
 
@@ -49,7 +52,7 @@ async def generate(exp_id: int, path_length: float, symmetry: float, input_map: 
     input_array = np.array(input_map[0]) # 2D int encoded level
     binary_array = np.array(input_map[1]) # binary array noting which tiles are fixed
     combined = np.array([input_array, binary_array])
-    x = run(exp_id, symmetry, path_length, combined)
+    x = run(exp_id, symmetry, path_length, combined, LOCAL)
     return {"generated_map": x}
 
 
@@ -102,6 +105,7 @@ def get_both_and_obj(exp_id: int):
     Returns:
         behaviours: List[List[float], List[float], List[float]]
     """
+    print(exp_id)
     return {"behaviours": get_obj_char(exp_id)}
 
 @app.get("/experimentnames")
@@ -112,7 +116,7 @@ def experiment_names():
     Returns:
         experiments_names: List
     """
-    return {"names": list_models_folders()}
+    return {"names": list_models_folders(LOCAL)}
 
 # Test endpoints
 @app.get("/test")

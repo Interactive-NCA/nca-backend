@@ -20,7 +20,13 @@ The interactive web app that utilizes this backend can be seen [here](https://in
 To get started with this project, you will need to clone the repository to your local machine:
 
 ```bash
-git clone git@github.com:Interactive-NCA/nca-backend.git
+git clone --recurse-submodules -j8 git@github.com:Interactive-NCA/nca-backend.git
+```
+
+Then, make a copy of the submodule:
+
+```bash
+cp -r app/ext/control-pcgnca app/ext/pcgnca
 ```
 
 Next, you will need to install the dependencies using pip:
