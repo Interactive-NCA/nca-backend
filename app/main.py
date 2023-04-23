@@ -4,6 +4,7 @@ import numpy as np
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.utils.run_model import run
+from app.utils.training_seeds import get_training_seeds
 from app.utils.behaviour import get_extremes_behaviour0_char, get_extremes_behaviour1_char, get_behaviour0_char, get_behaviour1_char, get_obj_char
 from app.utils.get_path import list_models_folders
 
@@ -116,6 +117,22 @@ def experiment_names():
         experiments_names: List
     """
     return {"names": list_models_folders(LOCAL)}
+
+@app.get("/trainingseeds")
+async def get_training_seeds_endpoint(exp_id: int, path_length: float, symmetry: float):
+    """
+    Generate a level from a given seed
+    Args:
+        exp_id: int
+        path_length: float
+        symmetry: float
+
+    Returns:
+        training_seeds for selected model
+    """
+
+    x = get_training_seeds(exp_id, symmetry, path_length, LOCAL) 
+    return {"training_seeds": x}
 
 # Test endpoints
 @app.get("/test")
