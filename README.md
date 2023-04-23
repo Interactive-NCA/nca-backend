@@ -35,7 +35,8 @@ Next, you will need to install the dependencies using pip:
 pip install -r requirements.txt
 ```
 
-Once you have installed the dependencies, you can run the backend using the following command:
+Before running the backend, make sure that in the [main.py](app/main.py) the variable `LOCAL` is set to `True`.
+Finally, you can run the backend using the following command:
 
 ```bash
 uvicorn app.main:app --reload
