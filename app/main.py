@@ -9,7 +9,7 @@ from app.utils.behaviour import get_extremes_behaviour0_char, get_extremes_behav
 from app.utils.get_path import list_models_folders
 
 
-LOCAL = False
+LOCAL = True
 
 app = FastAPI(title='Interactive NCA API',
               description='API endpoints for the Interactive NCA model')

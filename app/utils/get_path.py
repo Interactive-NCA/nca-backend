@@ -27,35 +27,31 @@ def get_archive(exp_id=None, local=False):
     Get the archive
     """
 
-    if local:
-        # - Load models
+    # - Load models
+    if local and exp_id:
+        df = pd.read_csv(f"app/models/exp{exp_id}/trained_archive.csv")
+    elif local:
         PATH = get_archive_path()
         df = pd.read_csv(PATH)
-
-        # - Select the best models with non-zero solution path length
-        df = df.sort_values(by=['objective'], ascending=False)
-        df = ArchiveDataFrame(df)
-        
-        return df
-
     else:
         BUCKET_NAME = "pcgnca-experiments"
         PATH = f'models/exp{exp_id}/trained_archive_subsampled.csv' # Get path desired from the user
-
         df = pd.read_csv(f'gs://{BUCKET_NAME}/{PATH}')
 
-        df = df.sort_values(by=['objective'], ascending=False)
-
-        df = ArchiveDataFrame(df)
-
-        return df 
+    # - Select the best models with non-zero solution path length
+    df = df.sort_values(by=['objective'], ascending=False)
+    df = df[df['measure_1'] > 0]
+    df = ArchiveDataFrame(df)
+    
+    return df
 
 def load_training_seeds(exp_id=None, local=False):
     """
     Load the training seeds
     """
     if local:
-        pass
+        with open(f"app/models/exp{exp_id}/training_seeds.pkl", "rb") as f:
+            train_seeds = pickle.load(f)
     else:
         BUCKET_NAME = "pcgnca-experiments"
 
@@ -115,7 +111,7 @@ def list_models_folders(local=False):
 
         # -- Get all the experiment ids
         # --- Form: exp[ID]
-        experiments = [x[0].split(os.sep)[-1] for x in os.walk(path)][1:]
+        experiments = [os.path.join(path, x).split(os.sep)[-1] for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
 
         # --- Parse the id
         experiments = [int(x[3:]) for x in experiments]
