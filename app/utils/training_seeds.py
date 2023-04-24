@@ -27,6 +27,10 @@ def get_training_seeds(exp_id, symmetry, path_length, local):
       training_seeds = load_training_seeds(exp_id, local)
       init_state, fixed_state, binary_mask = training_seeds[generation]["init_states"], training_seeds[generation]["fixed_states"], training_seeds[generation]["binary_mask"]
 
+      if binary_mask is None:
+        binary_mask = np.zeros_like(init_state)
+        fixed_state = np.zeros_like(init_state)
+
       np.putmask(init_state, binary_mask, fixed_state)
 
       return [init_state.tolist(), binary_mask.tolist()]
