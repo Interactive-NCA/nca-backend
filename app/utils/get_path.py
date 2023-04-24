@@ -27,15 +27,13 @@ def get_archive(exp_id=None, local=False):
     Get the archive
     """
 
-    model_filter = df["measure_1"] > 0
-
     if local:
         # - Load models
         PATH = get_archive_path()
         df = pd.read_csv(PATH)
 
         # - Select the best models with non-zero solution path length
-        df = df.sort_values(by=['objective'], ascending=False)[model_filter]
+        df = df.sort_values(by=['objective'], ascending=False)
         df = ArchiveDataFrame(df)
         
         return df
@@ -46,7 +44,7 @@ def get_archive(exp_id=None, local=False):
 
         df = pd.read_csv(f'gs://{BUCKET_NAME}/{PATH}')
 
-        df = df.sort_values(by=['objective'], ascending=False)[model_filter]
+        df = df.sort_values(by=['objective'], ascending=False)
 
         df = ArchiveDataFrame(df)
 
