@@ -59,7 +59,7 @@ def load_training_seeds(exp_id=None, local=False):
     else:
         BUCKET_NAME = "pcgnca-experiments"
 
-        blob_path = f'models/exp{exp_id}/training_seeds.pkl'
+        blob_path = f'models/exp{exp_id}/training_seeds_subsampled.pkl'
         client = storage.Client()
         bucket = client.get_bucket(BUCKET_NAME)
         blob = bucket.blob(blob_path)
