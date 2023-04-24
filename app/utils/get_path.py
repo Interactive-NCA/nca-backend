@@ -42,7 +42,7 @@ def get_archive(exp_id=None, local=False):
 
     else:
         BUCKET_NAME = "pcgnca-experiments"
-        PATH = f'models/exp{exp_id}/trained_archive.csv' # Get path desired from the user
+        PATH = f'models/exp{exp_id}/trained_archive_subsampled.csv' # Get path desired from the user
 
         df = pd.read_csv(f'gs://{BUCKET_NAME}/{PATH}')
 
