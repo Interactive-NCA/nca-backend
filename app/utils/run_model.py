@@ -41,7 +41,6 @@ def run(exp_id, symmetry, path_length, input_map, local):
     generation = df[mask]["metadata"].to_numpy()[0]
 
     # - Get the model object
-    print(settings['binary_channel'])
     model = NCA(settings["n_tiles"], settings["n_aux_chans"], settings["binary_channel"])
 
     # - Set the models' weights

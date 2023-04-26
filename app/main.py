@@ -6,10 +6,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.utils.run_model import run
 from app.utils.training_seeds import get_training_seeds
 from app.utils.behaviour import get_extremes_behaviour0_char, get_extremes_behaviour1_char, get_behaviour0_char, get_behaviour1_char, get_obj_char
-from app.utils.get_path import list_models_folders
+from app.utils.get_path import list_models_folders, get_model_settings
 
 
-LOCAL = True
+LOCAL = False
 
 app = FastAPI(title='Interactive NCA API',
               description='API endpoints for the Interactive NCA model')
@@ -134,9 +134,14 @@ async def get_training_seeds_endpoint(exp_id: int, path_length: float, symmetry:
     x = get_training_seeds(exp_id, symmetry, path_length, LOCAL) 
     return {"training_seeds": x}
 
-# Test endpoints
-@app.get("/test")
-def generate():
-    input_map = np.random.randint(0, 4, size=(16, 16)) 
-    x = run(0.2, 5, input_map)
-    return {"generated_map": x}
+@app.get("/experimentdescriptions")
+async def get_exp_desc(exp_id: int):
+    """
+    Return experiment's description
+
+    Returns:
+        desc: str   
+    """
+    settings = get_model_settings(exp_id, LOCAL)
+
+    return {"desc": settings["settings_to_log"]["description"]}
