@@ -43,6 +43,9 @@ class ZeldaFixedTilesGenerator(FixedTilesBase):
         # -- Number of splits of grid per dimension (0 = full grid, ...)
         self.n_splits = [0, 1]
 
+        # -- Should easy fixed tiles (walls) be rotated
+        self.easy_rotate = False
+
         # -- Get the configs
         self._get_config() 
 
@@ -95,11 +98,17 @@ class ZeldaFixedTilesGenerator(FixedTilesBase):
         # Overview of generators 
         generators = {
             "easy": self._easy_generator,
-            "medium": self._medium_generator,
-            "hard": self._hard_generator
+            "easy_rotate": self._easy_generator,
+            "all_special_random": self._special_random,
+            "two_special_random": self._special_random,
+            "one_special_random": self._special_random,
+            "mixed": self._mixed
         }
 
-        assert self.difficulty in generators, "The difficulty must be one of easy, medium, hard."
+        assert self.difficulty in generators, "The specified difficulty was not found."
+
+        if self.difficulty == "easy_rotate":
+            self.easy_rotate = True
 
         return generators[self.difficulty]
 
@@ -164,31 +173,121 @@ class ZeldaFixedTilesGenerator(FixedTilesBase):
         """
 
         # - Generate the seeds with fixe tiles
-        result = np.zeros((n_seeds, self.grid_dim, self.grid_dim))
+        result = None
         for i in tqdm(range(n_seeds)):
             # -- Choose configuration
             config = self.configs[choice(self.n_splits)]
 
             # -- Generate the coordinates of the fixed tiles
             for x_bound, y_bound in zip(config["x_bounds"], config["y_bounds"]):
+
+                # --- Get the coordinates of walls
                 rows, cols = self._brick_object_gen(x_bound, y_bound, config["n_steps"], x_bound[0], y_bound[0])
-                result[i, rows, cols] = 1
+
+                # --- Create an array based on the coordinates
+                a = np.zeros((self.grid_dim, self.grid_dim))
+                a[rows, cols] = 1
+
+                # --- Rotate it randomly and save the result (if applicable)
+                if self.easy_rotate:
+                    k = choice([1, 2, 3, 4])# how many times to rotate
+                    a = np.rot90(a, k)
+
+                # --- Turn it into 3d 
+                a = a.reshape((1, self.grid_dim, self.grid_dim))
+
+                # --- Save it
+                if result is None:
+                    result = a
+                else:
+                    result = np.concatenate((result, a), axis=0)
 
         return result
 
-    def _medium_generator(self):
-        pass
+    def _special_random(self, n_seeds):
+        """
+        Generates special tiles (zelda, key, door) randomly such that
+        they do not appear in direct neighborhood of each other. In addition,
+        it is ensured that the tiles are not put right next to the boundaries
 
-    def _hard_generator(self):
-        pass
+        In addition, depending on the difficulty, it may generate all of the
+        special tiles or just subset.
+        """
 
+        # - Define result as 3 array where the 3 dimension refers to batch size
+        result = np.zeros((n_seeds, self.grid_dim, self.grid_dim))
+        for i in tqdm(range(n_seeds)):
+
+            # -- Determine which of the special tiles should be placed in the grid
+            if self.difficulty == "all_special_random":
+                tiles_to_place = [2, 3, 4] # zelda, key, door
+            elif self.difficulty == "two_special_random":
+                tiles_to_place = set()
+                while len(tiles_to_place) < 2:
+                    tiles_to_place.add(randint(2,4))
+                tiles_to_place = list(tiles_to_place)
+            elif self.difficulty == "one_special_random":
+                tiles_to_place = set()
+                while len(tiles_to_place) < 1:
+                    tiles_to_place.add(randint(2,4))
+                tiles_to_place = list(tiles_to_place)
+            
+            # -- Add stoping value
+            tiles_to_place = tiles_to_place + [-1]
+            
+            # -- Place the in the grid and save it to the result (inplace)
+            self._place_tiles_random(result, i, tiles_to_place)
+
+        return result
+
+    def _mixed(self, n_seeds):
+        # - Define types of fixed tiles you want to mix
+        tps = ["easy", "all_special_random", "two_special_random", "one_special_random"]
+
+        # - Hyperparams
+        n_per_type = int(n_seeds/len(tps))
+
+        # - Get the mix
+        result = None
+        for t in tps:
+            # -- Get the generator
+            self.difficulty = t
+            gen = self._from_difficulty_to_gen()
+            tls = gen(n_per_type)
+            if result is None:
+                result = tls
+            else:
+                result = np.concatenate((result, tls), axis=0)
+
+        # - Shuffle
+        np.random.shuffle(result)
+
+        return result
+    
+    def _place_tiles_random(self, result, i, tiles_to_place):
+        
+        curr = tiles_to_place.pop(0)
+        while curr > 0:
+
+            # --- Generate coordinates to place the curr tile at
+            x, y = randint(0, self.grid_dim - 1), randint(0, self.grid_dim - 1)
+
+            # --- Check there are no other tiles in its neighborhood as well the tile is not right next to border
+            left_b, right_b = max(0, x - 1), min(self.grid_dim, x + 2)
+            bottom_b, top_b = max(0, y - 1), min(self.grid_dim, y + 2)
+            is_in_allowed_range = (0 < x < self.grid_dim - 1) and (0 < y < self.grid_dim - 1)
+            if result[i, left_b:right_b, bottom_b:top_b].sum() == 0 and is_in_allowed_range:
+
+                # ---- And if not, then place the tile there
+                result[i, x, y] = curr
+                curr = tiles_to_place.pop(0)
 
 # --------------------- Helper functions
 # ------------------------ Public
-def generate_fixed_tiles(game, n_seeds, difficulty, path, graphics_path):
+def generate_fixed_tiles(game, n_seeds, difficulty, settings_path, save_path, graphics_path):
 
     # - Load game's settings
-    game_set_path = os.path.join(path, "games", f"{game}.json")
+    game_set_path = os.path.join(settings_path, "games", f"{game}.json")
     with open(game_set_path) as f:
         settings = json.load(f)
 
@@ -199,7 +298,7 @@ def generate_fixed_tiles(game, n_seeds, difficulty, path, graphics_path):
     seeds = generator.generate(n_seeds)
 
     # - Save these as binary in npy format
-    outfile = os.path.join(path, "fixed_tiles", game, f"{difficulty}_{n_seeds}.npy")
+    outfile = os.path.join(save_path, f"{difficulty}_{n_seeds}.npy")
     np.save(outfile, seeds)
 
     # - Visualise some of them
@@ -210,7 +309,7 @@ def generate_fixed_tiles(game, n_seeds, difficulty, path, graphics_path):
         pil_img = visualiser.render_level(seeds[randint(0, n_seeds - 1)])
         frames.append(pil_img)
         
-    outfile = os.path.join(path, "fixed_tiles", game, f"{difficulty}_{n_seeds}.gif")
+    outfile = os.path.join(save_path, f"{difficulty}_{n_seeds}.gif")
     frames[0].save(outfile, format="GIF", append_images=frames, save_all=True, duration=100, loop=0)
 
 # ------------------------ Private

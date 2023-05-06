@@ -9,7 +9,7 @@ import os
 # ------- Internal library imports
 from pcgnca.utils import get_settings, get_evolver, generate_fixed_tiles, \
 get_experiments_summary, from_experimentid_to_evolver, get_slurm_file, from_experimentid_to_settings, \
-transfer_exp_folder
+transfer_exp_folder, subsample 
 
 # ------- Global vars definition
 SETTINGS_LOAD_PATH = "settings"
@@ -17,6 +17,7 @@ EXPERIMENT_SAVE_PATH = "experiments"
 GRAPHICS_PATH = os.path.join("assets", "games")
 SUMMARIES_PATH = "summaries"
 TRANSFER_PATH = "fortransfer"
+EVAL_FOLDER_PATH = "evaluations"
 
 # ------- CLI arguments definition
 parser = argparse.ArgumentParser(
@@ -30,6 +31,7 @@ parser.add_argument('--summarise', action='store', type=str)
 parser.add_argument('--file-transfer', action='store_true', default=False)
 parser.add_argument('--gen-slurm-script', action='store_true', default=False)
 parser.add_argument('--gen-fixed-seeds', action='store_true', default=False)
+parser.add_argument('--subsample', action='store_true', default=False)
 
 # --- Hyper-parameters for activities
 # ---- For file transfer between server and local
@@ -52,6 +54,17 @@ parser.add_argument('--fixedgen-game', action='store')
 parser.add_argument('--fixedgen-nseeds', action='store', type=int)
 parser.add_argument('--fixedgen-difficulty', action='store')
 
+# ---- For evaluation and summary
+parser.add_argument('--fxd_til', action='store', type=str)
+parser.add_argument('--fxd_til_size', action='store', type=int)
+parser.add_argument('--n_evals', action='store', type=int)
+parser.add_argument('--eval_batch_size', action='store', type=int)
+
+# ---- For subsampling of the archive
+parser.add_argument('--n_models', action='store', type=int)
+parser.add_argument('--subsample_method', action='store', type=str)
+parser.add_argument('--k', action='store', type=int, default=30)
+
 # -- Parse the arguments
 args = parser.parse_args()
 
@@ -71,6 +84,16 @@ def run_training_assertions():
 def run_evaluation_assertions():
     assert args.n_cores is not None, "You must specify --n_cores flag denoting how many cpu cores should be used"
     assert args.expid is not None, "You specify which experiment you want to evalaute via --expid"
+    assert args.fxd_til is not None, "You must specify the type of fixed tiles, e.g. manual."
+    assert args.fxd_til_size is not None and args.fxd_til_size > 0, "You must specify how large should be the archive with fixed tiles."
+    assert args.n_evals is not None and args.n_evals > 0, "You must specify number of evaluations of the given experiment."
+    assert args.eval_batch_size is not None and args.eval_batch_size >= 10, "You must specify size of evaluation batch size and it has to be at least 10."
+
+def run_summary_assertions():
+    assert args.fxd_til is not None, "You must specify the type of fixed tiles, e.g. manual."
+    assert args.fxd_til_size is not None and args.fxd_til_size > 0, "You must specify how large should be the archive with fixed tiles."
+    assert args.n_evals is not None and args.n_evals > 0, "You must specify number of evaluations of the given experiment."
+    assert args.eval_batch_size is not None and args.eval_batch_size >= 10, "You must specify size of evaluation batch size and it has to be at least 10."
 
 def run_gen_fixed_tiles_assertions():
     assert args.fixedgen_game is not None, "Must specify for which game you want to generate fixed tiles."
@@ -89,6 +112,11 @@ def run_gen_slurm_file_assertions():
     # - Evaluate
     if args.evaluate:
         run_evaluation_assertions()
+
+def run_subsample_assertions():
+    assert args.n_models is not None and args.n_models > 30, "At least 30 models must be in the subsampled archive."
+    assert args.expid is not None, "You must specify which experiment's archive you want to subsample via --expid flag."
+    assert args.subsample_method is not None, "You must specify which subsampling method you wish. Use --subsample_method with either 'basic' or 'kmeans'." 
 
 def load_evolver():
 
@@ -122,6 +150,17 @@ def load_evolver():
 
 # ------- Execution based on flags
 def main():
+
+    # SUBSAMPLING of the archive
+    if args.subsample:
+        # - Run assertions
+        run_subsample_assertions()
+
+        # - Load settings
+        settings = from_experimentid_to_settings(SETTINGS_LOAD_PATH, EXPERIMENT_SAVE_PATH, args.expid, vars(args))
+
+        # - Run the subsample script
+        subsample(settings, args.n_models, args.subsample_method, args.k)
 
     # TRANSFERING FILES
     # - Server to local
@@ -181,12 +220,29 @@ def main():
 
     # - Eval
     if args.evaluate:
-        evolver.evaluate_archive()
+        evolver.evaluate_archive(EVAL_FOLDER_PATH, 
+                                 SETTINGS_LOAD_PATH, 
+                                 GRAPHICS_PATH, 
+                                 generate_fixed_tiles, 
+                                 args.fxd_til, 
+                                 args.fxd_til_size,
+                                 args.n_evals,
+                                 args.eval_batch_size)
     
     # MARKDOWN summary and comparison of different experiments
     if args.summarise:
+        # - Run assertion
+        run_summary_assertions()
+
+        # - Input prep
+        # -- Parse ids
         ids = [int(expid) for expid in args.summarise.split(",")]
-        get_experiments_summary(ids, EXPERIMENT_SAVE_PATH, SUMMARIES_PATH)
+        # -- Get a path to the given input
+        p = os.path.join(EVAL_FOLDER_PATH, f"{args.fxd_til}-{args.fxd_til_size}") 
+        assert os.path.exists(p), "The requested experiments have not been evaluted yet."
+
+        # - Run the summariser
+        get_experiments_summary(ids, p, SUMMARIES_PATH, args.n_evals, args.eval_batch_size)
 
     # GENERATION OF FIXED SEEDS
     if args.gen_fixed_seeds:
@@ -199,7 +255,8 @@ def main():
             game=args.fixedgen_game,
             n_seeds=int(args.fixedgen_nseeds),
             difficulty=args.fixedgen_difficulty,
-            path=SETTINGS_LOAD_PATH,
+            settings_path=SETTINGS_LOAD_PATH,
+            save_path=os.path.join(SETTINGS_LOAD_PATH, "fixed_tiles", args.fixedgen_game),
             graphics_path=os.path.join(GRAPHICS_PATH, args.fixedgen_game)
         )
 
