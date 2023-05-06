@@ -30,9 +30,11 @@ def get_archive(exp_id=None, local=False):
     # - Load models
     if local and exp_id:
         df = pd.read_csv(f"app/models/exp{exp_id}/trained_archive.csv")
+        df = df[df['measure_1'] > 0]
     elif local:
         PATH = get_archive_path()
         df = pd.read_csv(PATH)
+        df = df[df['measure_1'] > 0]
     else:
         BUCKET_NAME = "pcgnca-experiments"
         PATH = f'models/exp{exp_id}/trained_archive_subsampled.csv' # Get path desired from the user
@@ -40,7 +42,6 @@ def get_archive(exp_id=None, local=False):
 
     # - Select the best models with non-zero solution path length
     df = df.sort_values(by=['objective'], ascending=False)
-    df = df[df['measure_1'] > 0]
     df = ArchiveDataFrame(df)
     
     return df
