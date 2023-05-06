@@ -106,4 +106,4 @@ def run(exp_id, symmetry, path_length, input_map, local):
     aux_channels = np.transpose(aux_channels, (2, 0, 3, 4, 1))
     aux_channels = np.squeeze(aux_channels, axis=4)
 
-    return [lvl_per_step.tolist(), aux_channels.tolist()] 
+    return [lvl_per_step.tolist(), aux_channels.tolist(), [str(last_stats["symmetry"]), str(last_stats["path_length"])]] 
