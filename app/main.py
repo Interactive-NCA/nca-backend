@@ -20,7 +20,9 @@ origins = [
     "https://interactive-nca-ui-lukyrasocha.vercel.app/",
     "https://interactive-nca-ui.vercel.app/",
     "https://interactive-nca-ui-lukyrasocha.vercel.app",
-    "https://interactive-nca-ui.vercel.app"
+    "https://interactive-nca-ui.vercel.app",
+    "https://www.zeldalevelcraft.com/",
+    "https://www.zeldalevelcraft.com"
 ]
 
 app.add_middleware(
