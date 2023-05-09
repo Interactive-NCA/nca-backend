@@ -26,7 +26,7 @@ def get_training_seeds(exp_id, symmetry, path_length, local):
     # - Apply the fixed tiles
     training_seeds = load_training_seeds(exp_id, local)
 
-    # Get the first key of the dictionary to check whether the dictionaries within the dictionary have 3 "fixed_states"
+    # Get the first key of the dictionary to check whether the dictionaries within the dictionary have fixed tiles, binary mask and init states 
     first_key = list(training_seeds.keys())[0]
 
     if len(training_seeds[first_key]) == 3:
