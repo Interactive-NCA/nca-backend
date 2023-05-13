@@ -6,6 +6,8 @@ This repository contains a backend for hosting a neural cellular automata (NCA) 
 
 The NCA model uses a grid-based approach, where each cell in the grid represents a tile in the level. The model generates levels by updating each cell in the grid based on its neighboring cells, and then repeating this process for a set number of iterations. The output of the model is a 2D grid of tiles that represents a generated Zelda level.
 
+🧑‍🔬 Currently we are hosting experiments: `16, 38, 27, 28, 29`. The endpoints usually require you to choose which experiment you want the NCA models from. 
+
 ## 🛡️ Zelda level generation 
 
 The interactive web app that utilizes this backend can be seen [here](https://interactive-nca-ui.vercel.app/)
@@ -54,7 +56,7 @@ This will start the FastAPI server, which you can access by navigating to `http:
 ## 📝 Usage
 
 The backend provides a simple API for generating Zelda levels using an archive of trained NCA models.
-To check all the endpoints in a swagger UI you can navigate to `http://localhost:8000/docs`
+To check all the endpoints in a swagger UI you can navigate to `http://localhost:8000/docs`. The main endpoint is `/generate`
 
 
 ## 🌐 Deployment
