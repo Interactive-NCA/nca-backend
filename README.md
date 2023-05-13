@@ -35,7 +35,14 @@ Next, you will need to install the dependencies using pip:
 pip install -r requirements.txt
 ```
 
-Before running the backend, make sure that in the [main.py](app/main.py) the variable `LOCAL` is set to `True`.
+If you wish to use experiments, that we conducted in our research, you need to set the `LOCAL` variable in [main.py](app/main.py) to `False`.
+
+If you want to load your own custom experiments locally. You need to load them in [app/models](app/models) by creating a folder that is named
+`expEXP_ID` where `EXP_ID` is the experiment's number that you choose, then in this folder, upload there the experiment's `settings.json` and
+the `trained_archive.csv` of trained NCA models. Don't forget to set the `LOCAL` variable to `True`. 
+
+⚠️ Note: The `LOCAL=True` setup has not been tested exhaustively, so please submit an issue if you have troubles running your own custom experiments.
+
 Finally, you can run the backend using the following command:
 
 ```bash
@@ -46,47 +53,9 @@ This will start the FastAPI server, which you can access by navigating to `http:
 
 ## 📝 Usage
 
-The backend provides a simple API for generating Zelda levels using the NCA model. To generate a level, you can send a POST request to the `/generate?path_length=${PATH_LENGTH}&symmetry=${SYMMETRY}` endpoint with the following JSON payload:
+The backend provides a simple API for generating Zelda levels using an archive of trained NCA models.
+To check all the endpoints in a swagger UI you can navigate to `http://localhost:8000/docs`
 
-```bash
-curl -X 'POST' \
-  'https://nca-backend-rxv2teft2q-ew.a.run.app/generate?path_length=10&symmetry=10' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0],
-       [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
-       [0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
-       [0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0],
-       [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 1, 1, 6, 1, 1, 1, 1, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 5, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
-       [0, 0, 0, 1, 6, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-       [0, 0, 3, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 2, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]'
-
-```
-
-The backend will respond with a JSON payload containing the generated level data:
-
-```json
-{
-  "generated_map": [
-    [0, 0, 0, ...],
-    [0, 1, 1, ...],
-    [0, 1, 1, ...],
-    ...
-  ]
-}
-
-```
-
-The width and height parameters specify the dimensions of the generated level in tiles. The tiles parameter is a 2D array of integers, where each integer represents a tile in the level.
 
 ## 🌐 Deployment
 
